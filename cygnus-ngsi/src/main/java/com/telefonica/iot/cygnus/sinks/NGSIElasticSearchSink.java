@@ -296,12 +296,8 @@ public class NGSIElasticSearchSink extends NGSISink {
                 bulkOperation += operation;
                 bulkOperation += "\n";
                 bulkOperation += sourceToIndex;
-                
-                if (bulkOperations.isEmpty()) {
-                	bulkOperations += bulkOperation;
-                } else {
-                	bulkOperations += "\n" + bulkOperation;
-                } // if else
+                bulkOperation += "\n";
+                bulkOperations += bulkOperation;
             } // for       	
         }
                 

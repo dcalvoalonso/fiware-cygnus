@@ -193,7 +193,7 @@ public abstract class HttpBackend {
             } // for
         } // if
 
-        LOGGER.debug("Http request: " + request.toString());
+        LOGGER.info("Http request: " + request.toString());
 
         try {
             httpRes = httpClient.execute(request);

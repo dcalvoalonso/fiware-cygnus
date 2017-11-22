@@ -92,8 +92,12 @@ RUN \
     mkdir -p ${FLUME_HOME}/plugins.d/cygnus && \
     mkdir -p ${FLUME_HOME}/plugins.d/cygnus/lib && \
     mkdir -p ${FLUME_HOME}/plugins.d/cygnus/libext && \
-    chown -R cygnus:cygnus ${FLUME_HOME} && \
-    # Make a shallow clone to help reduce final image size
+    chown -R cygnus:cygnus ${FLUME_HOME}
+
+# Make a shallow clone to help reduce final image size.
+ARG INCUBATOR_VER=unknown
+RUN INCUBATOR_VER=${INCUBATOR_VER}
+RUN \    
     echo "INFO: Cloning Cygnus using <${GIT_URL_CYGNUS}> and <${GIT_REV_CYGNUS}>" && \
     git clone --depth 1 ${GIT_URL_CYGNUS} ${CYGNUS_HOME} && \
     cd ${CYGNUS_HOME} && \

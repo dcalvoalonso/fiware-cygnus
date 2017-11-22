@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.http.Header;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
 
 import com.telefonica.iot.cygnus.backends.http.HttpBackend;
 import com.telefonica.iot.cygnus.backends.http.JsonResponse;
@@ -30,8 +31,11 @@ public class ElasticSearchBackendImpl extends HttpBackend implements ElasticSear
 	public void persist(String bulkRecords) throws CygnusBadConfiguration, CygnusRuntimeError, CygnusPersistenceError {
     
     // create the ES request URL
-    String urlPath = "_bulk";
+    String urlPath = "/_bulk";
     ArrayList<Header> headers = new ArrayList<>();
+    headers.add(new BasicHeader("Content-Type", "application/json; charset=utf-8"));
+   
+
     // do the ES request
     JsonResponse res = doRequest("POST", urlPath, true, headers, new StringEntity(bulkRecords, "UTF-8"));
 
