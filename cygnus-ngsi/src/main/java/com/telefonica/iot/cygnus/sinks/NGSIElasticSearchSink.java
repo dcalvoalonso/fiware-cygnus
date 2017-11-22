@@ -262,43 +262,17 @@ public class NGSIElasticSearchSink extends NGSISink {
                 return;
             } // if
             
-            for (ContextAttribute contextAttribute : contextAttributes) {
-                String attrName = contextAttribute.getName();
-                String attrType = contextAttribute.getType();
-                String attrValue = contextAttribute.getContextValue(false);
-                String attrMetadata = contextAttribute.getContextMetadata();
-                
-                // check if the attribute value is based on white spaces
-                if (attrValue.trim().length() == 0) {
-                    continue;
-                } // if
-                
-                // check if the metadata contains a TimeInstant value; use the notified reception time instead
-                Long recvTimeTs;
-
-                Long timeInstant = CommonUtils.getTimeInstant(attrMetadata);
-
-                if (timeInstant != null) {
-                    recvTimeTs = timeInstant;
-                } else {
-                    recvTimeTs = notifiedRecvTimeTs;
-                } // if else
-                
-                LOGGER.debug("[" + getName() + "] Processing context attribute (name=" + attrName + ", type="
-                        + attrType + ")");
-                
-                String bulkOperation = "";
-                
-                Gson gson = new Gson();
-                String operation = "{\"index\" : {\"_index\":\""+index+"\","
-                		+ "\"type\" : {\"_type\":\""+type+"\"}}";
-                String sourceToIndex = gson.toJson(contextAttribute);
-                bulkOperation += operation;
-                bulkOperation += "\n";
-                bulkOperation += sourceToIndex;
-                bulkOperation += "\n";
-                bulkOperations += bulkOperation;
-            } // for       	
+            String bulkOperation = "";
+            
+            Gson gson = new Gson();
+            String operation = "{\"index\" : {\"_index\":\""+index+"\","
+            		+ "\"_type\":\""+type+"\"}}";
+            String sourceToIndex = gson.toJson(contextElement);
+            bulkOperation += operation;
+            bulkOperation += "\n";
+            bulkOperation += sourceToIndex;
+            bulkOperation += "\n";
+            bulkOperations += bulkOperation;
         }
                 
     } // MongoDBAggregator
