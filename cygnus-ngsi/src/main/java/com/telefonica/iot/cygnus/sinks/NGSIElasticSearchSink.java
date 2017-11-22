@@ -156,7 +156,7 @@ public class NGSIElasticSearchSink extends NGSISink {
 
             // Get an aggregator for this entity and initialize it based on the first event
             ElasticSearchAggregator aggregator = new ElasticSearchAggregator();
-            aggregator.initialize(firstEvent);
+            aggregator.initialize(firstEvent, this.elasticSearchIndex, this.elasticSearchType);
 
             for (NGSIEvent event : events) {
                 aggregator.aggregate(event);
@@ -232,12 +232,14 @@ public class NGSIElasticSearchSink extends NGSISink {
             return type;
         } // getIndex
         
-        public void initialize(NGSIEvent event) throws CygnusBadConfiguration {
+        public void initialize(NGSIEvent event,String index, String type) throws CygnusBadConfiguration {
             service = event.getServiceForNaming(enableNameMappings);
             servicePathForData = event.getServicePathForData();
             servicePathForNaming = event.getServicePathForNaming(enableGrouping, enableNameMappings);
             entityForNaming = event.getEntityForNaming(enableGrouping, enableNameMappings, enableEncoding);
             attributeForNaming = event.getAttributeForNaming(enableNameMappings);
+            this.index = index;
+            this.type = type;
         } // initialize
         
         public void aggregate(NGSIEvent cygnusEvent){
