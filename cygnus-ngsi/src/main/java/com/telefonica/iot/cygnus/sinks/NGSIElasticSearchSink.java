@@ -244,7 +244,8 @@ public class NGSIElasticSearchSink extends NGSISink {
         
         public void aggregate(NGSIEvent cygnusEvent){
             // get the event headers
-            long notifiedRecvTimeTs = cygnusEvent.getRecvTimeTs();
+            long notifiedRecvTimeTs = cygnusEvent.getRecvTimeTs();;
+            String recvTime = CommonUtils.getHumanReadable(notifiedRecvTimeTs, true);
 
             // get the event body
             ContextElement contextElement = cygnusEvent.getContextElement();
@@ -262,17 +263,106 @@ public class NGSIElasticSearchSink extends NGSISink {
                 return;
             } // if
             
+            ElasticSearchDocument document = new ElasticSearchDocument(
+            		contextElement,
+            		recvTime,
+            		this.service,
+            		this.servicePathForData,
+            		this.servicePathForNaming,
+            		this.entityForNaming,
+            		this.attributeForNaming);
+            
             String bulkOperation = "";
             
             Gson gson = new Gson();
             String operation = "{\"index\" : {\"_index\":\""+index+"\","
             		+ "\"_type\":\""+type+"\"}}";
-            String sourceToIndex = gson.toJson(contextElement);
+            String sourceToIndex = gson.toJson(document);
             bulkOperation += operation;
             bulkOperation += "\n";
             bulkOperation += sourceToIndex;
             bulkOperation += "\n";
             bulkOperations += bulkOperation;
+        }
+        
+        /**
+         * Class to represent a document to be indexed in ElasticSearch
+         * @author a620381
+         *
+         */
+        private class ElasticSearchDocument{
+        	
+        	private ContextElement contextElement;
+        	
+        	private String notificationTimeStamp;
+        	
+        	private String service;
+        	
+        	private String servicePathForData;
+        	
+        	private String servicePathForNaming;
+        	
+        	private String entityForNaming;
+        	
+        	private String attributeForNaming;
+        	
+        	/**
+        	 * Initializes a new instance of ElasticSearchDocument
+        	 * @param contextElement
+        	 * @param notificationTimeStamp
+        	 * @param service
+        	 * @param servicePathForData
+        	 * @param servicePathForNaming
+        	 * @param entityForNaming
+        	 * @param attributeForNaming
+        	 */
+        	public ElasticSearchDocument(
+        			ContextElement contextElement,
+        			String notificationTimeStamp,
+        			String service,
+        			String servicePathForData,
+        			String servicePathForNaming,
+        			String entityForNaming,
+        			String attributeForNaming){
+        		
+        		this.contextElement = contextElement;
+        		this.notificationTimeStamp = notificationTimeStamp;
+        		this.service = service;
+        		this.servicePathForData = servicePathForData;
+        		this.servicePathForNaming = servicePathForNaming;
+        		this.entityForNaming = entityForNaming;
+        		this.attributeForNaming = attributeForNaming;
+        	
+        	}
+
+			public ContextElement getContextElement() {
+				return contextElement;
+			}
+
+			public String getNotificationTimeStamp() {
+				return notificationTimeStamp;
+			}
+
+			public String getService() {
+				return service;
+			}
+
+			public String getServicePathForData() {
+				return servicePathForData;
+			}
+
+			public String getServicePathForNaming() {
+				return servicePathForNaming;
+			}
+
+			public String getEntityForNaming() {
+				return entityForNaming;
+			}
+
+			public String getAttributeForNaming() {
+				return attributeForNaming;
+			}
+        	
         }
                 
     } // MongoDBAggregator
